@@ -40,7 +40,8 @@ class YOLOConfiger:
         self.init_epoch = self.config['TRAIN']['INIT_EPOCH']
         self.first_stage_epochs = self.config['TRAIN']['FIRST_STAGE_EPOCHS']
         self.second_stage_epochs = self.config['TRAIN']['SECOND_STAGE_EPOCHS']
-        self.pre_train_file_path = str(Path(self.config['TRAIN']['PRETRAIN']))
+        pre_train = self.config['TRAIN']['PRETRAIN']
+        self.pre_train_file_path = str(Path(pre_train)) if pre_train else None
         self.test_annot_path = str(Path(self.config['TEST']['ANNOT_PATH']))
         self.test_batch_size = self.config['TEST']['BATCH_SIZE']
         self.num_class = len(self.classes)
