@@ -1,14 +1,14 @@
+import json
+import argparse
+import os
+import pickle
+import sys
+import logging as log
+import numpy as np
 from sklearn.cluster import KMeans
 from pathlib import Path
 from threading import Thread
 from configparser import ConfigParser
-import json
-import argparse
-import numpy as np
-import logging as log
-import os
-import pickle
-import sys
 
 
 class MakeYoloConfig:
@@ -26,7 +26,9 @@ class MakeYoloConfig:
             train_size: int = 1000,
             val_size: int = 200,
             tiny: bool = False,
-            score_threshold: float = 0.25
+            score_threshold: float = 0.25,
+            max_total_size: int = 50,
+            max_output_size_per_class: int = 50
     ):
         self.sys_config = ConfigParser()
         self.sys_config_file = Path(sys_config_path)
@@ -45,6 +47,8 @@ class MakeYoloConfig:
         self.train_size = train_size
         self.test_size = val_size
         self.tiny = tiny
+        self.max_total_size = max_total_size
+        self.max_output_size_per_class = max_output_size_per_class
         self.yolo_config = {}
         self.classes = []
         self.anchors = []
@@ -317,8 +321,8 @@ class MakeYoloConfig:
             'model_type': self.model_type,
             'size': self.size,
             'tiny': self.tiny,
-            'max_output_size_per_class': 40,
-            'max_total_size': 50,
+            'max_output_size_per_class': self.max_output_size_per_class,
+            'max_total_size': self.max_total_size,
             'iou_threshold': 0.5,
             'score_threshold': self.score_threshold,
             'YOLO': {
@@ -390,8 +394,12 @@ if __name__ == '__main__':
     parser.add_argument('-ep', '--epoch', type=int, default=30, help='Total of epoch')
     parser.add_argument('-ts', '--train_size', type=int, default=1000, help='Train epoch size')
     parser.add_argument('-vs', '--val_size', type=int, default=200, help='Val epoch size')
+    parser.add_argument('-mts', '--max_total_size', type=int, default=50, help='Max number detections of total')
+    parser.add_argument('-mpc', '--max_per_class', type=int, default=50, help='Max number detections of per class')
     args = parser.parse_args()
     try:
+        for arg in vars(args):
+            print(arg, getattr(args, arg))
         myc = MakeYoloConfig(
             args.name,
             args.classes,
@@ -405,7 +413,9 @@ if __name__ == '__main__':
             epoch=args.epoch,
             train_size=args.train_size,
             val_size=args.val_size,
-            score_threshold=args.score_threshold
+            score_threshold=args.score_threshold,
+            max_total_size=args.max_total_size,
+            max_output_size_per_class=args.max_per_class
         )
         myc.make()
     except Exception as E:
