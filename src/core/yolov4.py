@@ -317,7 +317,7 @@ def filter_boxes(box_xywh, scores, score_threshold=0.4, input_shape=tf.constant(
         box_maxes[..., 1:2]  # x_max
     ], axis=-1)
     # return tf.concat([boxes, pred_conf], axis=-1)
-    return (boxes, pred_conf)
+    return boxes, pred_conf
 
 
 def compute_loss(pred, conv, label, bboxes, STRIDES, NUM_CLASS, IOU_LOSS_THRESH, i=0):
