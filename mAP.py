@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+from argparse import ArgumentParser
 from sklearn.metrics import precision_score, recall_score
 from typing import Dict
 from src.detector import Detector
@@ -124,6 +125,10 @@ class mAP:
 
 
 if __name__ == '__main__':
-    m_ap = mAP('configs/person-416-pre.json', 0.5)
+    arg_parser = ArgumentParser(description='Calc models AP')
+    arg_parser.add_argument('config', type=str, help='config file path')
+    arg_parser.add_argument('iou', type=float, help='iou_threshold')
+    args = arg_parser.parse_args()
+    m_ap = mAP(args.config, args.iou)
     m = m_ap.calc()
     print(f'mAP = {m}')
