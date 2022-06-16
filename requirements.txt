@@ -1,4 +1,5 @@
-opencv-python
-tensorflow-gpu
-sklearn
 numpy
+opencv-python
+matplotlib
+sklearn
+tensorflow-gpu
