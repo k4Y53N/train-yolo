@@ -231,20 +231,18 @@ class MakeYoloConfig:
 
     def load_annotation_file(self, file: Path, classes: list):
         log.info(f'Start loading annotation file: {file.absolute()}')
-        if file.suffix == '.pickle':
-            with file.open('rb') as f:
+        data = None
+        with file.open('r') as f:
+            if '.pickle' == file.suffix:
                 data = pickle.load(f)
-                np.random.shuffle(data['images'])
-                np.random.shuffle(data['annotations'])
-        elif file.suffix == '.json':
-            with file.open('r') as f:
+            elif '.json' == file.suffix:
                 data = json.load(f)
-                np.random.shuffle(data['images'])
-                np.random.shuffle(data['annotations'])
-        else:
+        if data is None:
             raise RuntimeError('Unknown file suffix')
-
+        np.random.shuffle(data['images'])
+        np.random.shuffle(data['annotations'])
         log.info(f'loading annotation file: {file.absolute()} finish')
+
         return self._filter(data, classes)
 
     def _filter(self, data, classes: list):
